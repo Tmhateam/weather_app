@@ -59,6 +59,8 @@ class HomeController extends GetxController {
     });
   }
 
+  // dsjfhjksdhf jsdf jskdfhjksd
+
   startGetWeather({required double lat, required double lon}) async {
     var response = await Dio().get(
       "https://api.openweathermap.org/data/2.5/weather",
