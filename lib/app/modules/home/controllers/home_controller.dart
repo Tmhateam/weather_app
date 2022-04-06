@@ -60,6 +60,7 @@ class HomeController extends GetxController {
   }
 
   // dsjfhjksdhf jsdf jskdfhjksd
+  // dfsdfsdfsdfdsf
 
   startGetWeather({required double lat, required double lon}) async {
     var response = await Dio().get(
