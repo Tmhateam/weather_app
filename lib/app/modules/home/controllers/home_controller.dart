@@ -1,8 +1,8 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weather/app/data/helpers/brain.dart';
 import 'package:weather/app/data/models/current_weather_model.dart';
 
 class HomeController extends GetxController {
@@ -18,6 +18,7 @@ class HomeController extends GetxController {
     super.onReady();
 
     waitForLocation();
+    startApiLogin();
   }
 
   @override
@@ -27,6 +28,20 @@ class HomeController extends GetxController {
     this.currentWeather.update((val) {
       this.currentWeather.value = currentWeather;
     });
+  }
+
+  updateTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (Get.isDarkMode) {
+      Get.changeTheme(ThemeData.light());
+      await prefs.setString('THEME', 'LIGHT');
+    } else {
+      Get.changeTheme(ThemeData.dark());
+      await prefs.setString('THEME', 'DARK');
+    }
+
+    update();
   }
 
   Future<Position?> getLocationData() async {
@@ -59,32 +74,13 @@ class HomeController extends GetxController {
     });
   }
 
-  // dsjfhjksdhf jsdf jskdfhjksd
-  // dfsdfsdfsdfds
-  // sdhgfshdj df jsdfj sdfjsdffsdj
-
   startGetWeather({required double lat, required double lon}) async {
-    var response = await Dio().get(
-      "https://api.openweathermap.org/data/2.5/weather",
-      queryParameters: {
-        "lat": 37.530671,
-        "lon": 49.563382,
-        "appId": "34c9997efd0f86bd53a3e427dab24049",
-        "units": "metric",
-        "lang": "fa",
-      },
-    );
+    await Brain.networkService.apiGetCurrentWeather(lat: lat, lon: lon).then((value) {
+      updateCurrentWeather(currentWeather: value);
+    });
+  }
 
-    if (response.statusCode == 200) {
-      print(json.encode(response.data));
-
-      VMCurrentWeather data = VMCurrentWeather.fromJson(response.data);
-
-      print((data.main ?? VMMain()).temp);
-
-      updateCurrentWeather(currentWeather: data);
-    } else {
-      print("Something's wrong!!!");
-    }
+  startApiLogin() async {
+    await Brain.networkService.apiLogin(email: "eve.holt@reqres.in", password: "cityslicka");
   }
 }

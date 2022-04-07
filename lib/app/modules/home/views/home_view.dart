@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:weather/app/data/models/current_weather_model.dart';
 
+import '../../../data/models/current_weather_model.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -17,19 +17,39 @@ class HomeView extends GetView<HomeController> {
             ),
             centerTitle: true,
           ),
-          body: Container(
-            width: Get.width,
-            child: Obx(() {
-              return Column(
+          body: Obx(() {
+            return Container(
+              width: Get.width,
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("${(controller.currentWeather.value.main ?? VMMain()).temp}"),
-                  Text("${(controller.currentWeather.value.weather ?? []).first.description}"),
+                  Text("${(controller.currentWeather.value.main ?? VMMain()).temp ?? 0}"),
+                  Text(
+                      "${(controller.currentWeather.value.weather ?? []).isNotEmpty ? controller.currentWeather.value.weather!.first.description : ""}"),
+                  SizedBox(
+                    height: 24.0,
+                  ),
+                  SizedBox(
+                    width: 160.0,
+                    height: 50.0,
+                    child: Material(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: Colors.blue,
+                      child: InkWell(
+                        onTap: () {
+                          controller.updateTheme();
+                        },
+                        child: Center(
+                          child: Text("Change theme"),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
-              );
-            }),
-          ),
+              ),
+            );
+          }),
         );
       },
     );
